@@ -1,0 +1,32 @@
+# 上游仓库体积大，按当课说明克隆，不入库
+third_party/*
+!third_party/README.md
+
+# 权重与模型
+*.bin
+*.gguf
+*.pt
+*.onnx
+*.engine
+
+# 构建
+build/
+**/build/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+compile_commands.json
+CTestTestfile.cmake
+cmake_install.cmake
+
+# 二进制与对象
+*.o
+*.a
+*.so
+*.out
+
+# 本地环境
+.cache/
+*.tmp
+.venv/
+__pycache__/
