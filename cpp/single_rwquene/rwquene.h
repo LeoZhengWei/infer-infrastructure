@@ -12,7 +12,7 @@
 #include <chrono>
 #endif
 
-# 单生产和消费模型的lock-free Queue
+// 单生产和消费模型的lock-free Queue
 #ifndef MOODYCAMEL_CACHE_LINE_SIZE
 #if defined(__powerpc__) || defined(__powerpc64__) || defined(__ppc64__) || defined (__PPC64) || defined(_ARCH_PPC64) || defined(_M_PPC)
     #define MOODYCAMEL_CACHE_LINE_SIZE 128
@@ -98,9 +98,9 @@ public:
                 auto block = make_block(largestBlockSize);
                 if (block == nullptr) {
 #ifdef MOODYCAMEL_EXCEPTIONS_ENABLED
-                throw std::bad_alloc()
+                    throw std::bad_alloc();
 #else
-                abort();
+                    abort();
 #endif
                 }
                 if (firstBlock == nullptr) {
@@ -117,10 +117,10 @@ public:
             firstBlock = make_block(largestBlockSize);
             if (firstBlock == nullptr) {
 #ifdef MOODYCAMEL_EXCEPTIONS_ENABLED 
-            throw std::bad_alloc();
+                throw std::bad_alloc();
 #else 
-            abort();
-#endif      
+                abort();
+#endif  
             }
             firstBlock->next = firstBlock;
         }
@@ -223,14 +223,27 @@ public:
         return inner_enqueue<CanAlloc>(element);
     }
 
+    // OP:入队一颗可移动复制的元素到队列
+    // 在需要的情况下，分配额外的内存块
+    // 如果内存分配失败，返回失败
+    AE_FORCEINLINE bool enqueue(T&& element) AE_NO_TSAN
+    {
+        retrun inner_enqueue<CanAlloc>(std::forward<T>(element));
+    }
 
 #if MOODYCAMEL_HAS_EMPLACE
-    template<AllocationMode canAlloc, typename... Args>
-    bool inner_enqueue(Args&&... args) AE_NO_TSAN
-#else 
-    template<AllocationMode canAlloc, typename U>
-    bool inner_enqueue(U&& element) AE_NO_TSAN
+    // 类似enqueue(), 但采用原位构造语义(即在原地构造对象)
+    template<typename... Args>
+    AE_FORCEINLINE bool emplace(Args&&... args) AE_NO_TSAN
+    {
+        return inner_enqueue<CanAlloc>(std::forward<Args>(args)...);
+    }
 #endif
+
+    // OP:尝试出队一个元素
+    // description：队列空时返回false，如果至少有一个元素，使用赋值运算符将队首元素赋值给result，然后返回true
+    template<typename U>
+    bool try_dequeue(U& result) AE_NO_TSAN
     {
 #ifndef NDEBUG
         ReentrantGuard guard(this->enqueuing);
@@ -245,80 +258,74 @@ public:
         size_t blockFront = tailBlock_->localFront;
         size_t blockTail = tailBlock_->tail.load();
 
-        size_t nextBlockTail = (blockTail + 1) & tailBlock_->sizeMask;
-        if (nextBlockTail != blockFront || nextBlockTail != (tailBlock_->localFront = tailBlock_->front.load()) {
+        if (blockFront != blockTail \
+            blockFront != (frontBlock_->localTail = frontBlock_->tail.load())) {
             fence(memory_order_acquire);
-            char* location = tailBlock_->data + blockTail * sizeof(T);
-#if MOODYCAMEL_HAS_EMPLACE
-            new (location) T(std::forward<Args>(args)...);
-#else 
-            new (location) T(std::forward<U>(element));
-#endif 
+
+        non_empty_front_block:
+            // 头块不空，从此出队
+            auto element = reinterpret<T*>(frontBlock_->data + blockFront * sizeof(T));
+            result = std::move(*element);
+            element->~T();
+
+            blockFront = (blockFront + 1) & frontBlock_->sizeMask;
+
             fence(memory_order_release);
-            tailBlock_->tail = nextBlockTail;
-        } 
-        else {
+            frontBlock_->front = blockFront;
+        }
+        else if (frontBlock_ != tailBlock.load()) {
             fence(memory_order_acquire);
-            if (tailBlock_->next.load() != frontBlock) {
-                // 不能再切换到前区块并在该区块中新增条目
-                // 原因：如果这么做，出队操作会停留在这个区块中，最终读取新增的数据
-                // 而不会切换到下一个已满的区块（该区块内的数据是最先入队的，应该优先被取出）
-                fence(memory_order_acquire);
+
+            frontBlock_ = frontBlock.load();
+            blockTail = frontBlock_->localTail = frontBlock_->tail.load();
+            blockFront = frontBlock_->front.load();
+            fence(memory_order_acquire);
+        }
+        else if (frontBlock_ != tailBlock.load()) {
+            fence(memory_order_acquire);
             
-                // 尾块满，但是在之前有空闲的块，使用
-                Block* tailBlockNext = tailBlock_->next.load();
-                size_t nextBlockFront = tailBlockNext->localFront = tailBlockNext->front.load();
-                nextBlockTail = tailBlockNext->tail.load();
-                fence(memory_order_acquire);
+            frontBlock_ = frontBlock.load();
+            blockTail = frontBlock_->loaclTail = frontBlock_->tail.load();
+            blockFront = frontBlock_->front.load();
+            fence(memory_order_acquire);
 
-                // 这个块由于不是头块，必须为空，并且我们会循环遍历各个块
-                assert(nextBlockFront == nextBlocktail);
-                tailBlockNext->localFront = nextBlockFront;
-
-                char* location = tailBlockNext->data + nextBlockTail * sizeof(T);
-#if MOODYCAMEL_HAS_EMPLACE
-                new (location) T(std::forward<Args>(args)...);
-#else   
-                new (location) T(std::forward<U>(element));
-#endif  
-                tailBlockNext->tail = (nextBlockTail + 1) & tailBlockNext->sizeMask;
-
-                fence(memory_order_release);
-                tailBlock = tailBlockNext;
+            if (blockFront != blockTail) {
+                // 前面的块并不空
+                goto non_empty_front_block;
             }
-            else if (canAlloc == CanAlloc) {
-                auto newBlockSize = largestBlockSize >= MAX_BLOCK_SIZE ? largestBlockSize : largestBlockSize * 2;
-                auto newBlock = make_block(newBlockSize);
-                if (nullptr == newBlock) {
-                    return false;
-                }
-                largestBlockSize = newBlockSize;
-            }
-#if MOODYCAMEL_HAS_EMPLACE 
-                new (newBlock->data) T(std::forward<Args>(args)...);
-#else       
-                new (newBlock->data) T(std::forward<U>(element));
-#endif
-                assert(newBlock->front == 0);
-                newBlock->tail = newBlock->localTail= 1;
 
-                newBlock->next = tailBlock_->next.load();
+            // 前方区块为空，但前方还有另外一个区块，前进至该区块
+            Block* nextBlock = frontBlock_->next;
+            // 这里不需要获取栅栏，因为next只能在tailBlock上被设置
+            // 而当前并不是tailBlock，并且我们在读取tailBlock之后已经执行过一次获取操作
+            // 该操作保证：如果我们此前正处于tailBlock，那么在当前CPU上next值是最新的值
 
-                // 发布所有写操作到*newBlock在它可以通过tailBlock_->next访问前
-                fence(memory_order_release);
-                tailBlock_->next = newBlock;
+            size_t nextBlockFront = nextBlock->front.load();
+            size_t nextBlockTail = nextBlock->localTail = nextBlock->tail.load();
+            fence(memory_order_acquire);
 
-                // 确保观察到新尾块的读取操作也能看到tailBlock_->next此前的写入发布
-                fence(memory_order_release);
-                tailBlock = newBlock;
-            }
-            else if (canAlloc == CannotAlloc) {
-                return false;
-            }
-            else {
-                assert(false && "Should be unreachable code");
-                return false;
-            }
+            // 因为tailBlock只有在写入之后才会向前移动
+            // 所以我们确定在该区块上一定存在可以出队的元素
+            assert(nextBlockFront != nextBlockTail);
+            AE_UNUSED(nextBlockTail);
+
+            // 该数据块处理完毕，生产者按需使用
+            fence(memory_order_release);
+            frontBlock = frontBlock_ = nextBlock;
+
+            compiler_fence(memory_order_release);
+
+            auto element = reinterpret<T*>(frontBlock_->data + nextBlockFront * sizeof(T));
+            result = std::move(*element);
+            element->~T();
+
+            nextBlockFront = (nextBlockFront + 1) & frontBlock_->sizeMask;
+
+            fence(memory_order_release);
+            frontBlock_->front = nextBlockFront;
+        }
+        else {
+            return false;
         }
         return true;
     }
@@ -366,5 +373,46 @@ private:
         weak_atomic<bool>& inSection;
     };
 #endif
+
+    struct Block {
+        // 把竞争变量放到各自独立的缓存，避免伪共享
+        weak_atomic<size_t> front;      // 原子元素从此处读取
+        size_t localTail;               // 消费者持有的无竞争的尾部影子副本
+
+        char cachelineFiller0[MOODYCAMEL_CACHE_LINE_SIZE - sizeof(weak_atomic<size_t>) - sizeof(size_t)];
+        weak_atomic<size_t> tail;       // 原子元素从此入队
+        size_t localFront;
+
+        char cachelineFiller1[MOODYCAMEL_CACHE_LINE_SIZE - sizeof(weak_atomic<size_t>) - sizeof(size_t)];
+        weak_atomic<Block*> next;       // (Atomic) 下一个块的指针
+
+        char* data;                     // 堆上的内容按照类型T的对齐要求对齐
+
+        const size_t sizeMask;
+        
+        // 大小必须是2的整数幂次
+        AE_NO_TSAN Block(size_t const& _size, char* _rawThis, char* _data)
+            : front(0UL), localTail(0), tail(0UL), localFront(0), next(nullptr), data(_data), sizeMask(_size - 1), rawThis(_rawThis)
+        {
+        }
+
+    private:
+        // 删除赋值运算操作符
+        Block& operator=(Block const&);
     
+    public:
+        char* rawThis;
+    };
+    
+    static Block* make_block(size_t capacity) AE_NO_TSAN
+    {
+        auto size = sizeof(Block) + std::alignment_of<Block>::value - 1;
+        size += sizeof(T) * capacity + std::alignment_of<T>::value - 1;
+        auto newBlockRaw = static_cast<char*>(std::malloc(size));
+        if (nullptr == newBlockRaw)    return nullptr;
+
+        auto newBlockAligned = align_for<Block>(newBlockRaw);
+        auto newBlockData = align_for<T>(newBlockAligned + sizeof(Block));
+        return new (newBlockAligned) Block(capacity, newBlockRaw, newBlockData);
+    }
 };
