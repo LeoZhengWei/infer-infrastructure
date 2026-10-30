@@ -1,0 +1,11 @@
+---
+description: 本目录微型 Transformer 训练课。Eigen、手写按层反向、SGD、过拟合约十句话。
+alwaysApply: true
+---
+
+# 本目录训练课
+
+- 读 `.cursor/skills/cpp-transformer-train/SKILL.md` 与 `PROGRESS.md`。
+- 可委派 `/cpp-transformer-tutor`。整课保持协议时把 skill 开成 Custom Mode。
+- 不代写实现。只更新 PLAN/PROGRESS，除非学员点名授权某文件。
+- 一次一课；能编译 → 梯度/形状正确 → 过关。毕业是十句话过拟合。
