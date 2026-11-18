@@ -30,3 +30,12 @@ cmake_install.cmake
 *.tmp
 .venv/
 __pycache__/
+
+# CFU-Playground：本地 conda / Renode 测试产物（体积大，不入库）
+cfu-playground/env/
+cfu-playground/**/__pycache__/
+cfu-playground/proj/*/log.html
+cfu-playground/proj/*/report.html
+cfu-playground/proj/*/robot_output.xml
+cfu-playground/proj/*/results-*.robot.xml
+cfu-playground/proj/*/*.robot.xml

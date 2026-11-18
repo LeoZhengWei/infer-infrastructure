@@ -13,3 +13,7 @@
 ## `cpp/transformer_cpp/`：独立训练项目
 
 该目录自带 `AGENTS.md` 与 `.cursor/`（skill / subagent / rule）。在那里上课，不要用本仓库推理主干抢课。
+
+## `cfu-playground/`：FPGA / CFU / Renode 学习线
+
+与推理主干、`transformer_cpp` 课不要混线。本地入口：`cfu-playground/enter-env.sh` 与 `cfu-playground/schedule/学习计划.md`。无板时用 Renode（`make renode-test` / `renode-headless`）。
