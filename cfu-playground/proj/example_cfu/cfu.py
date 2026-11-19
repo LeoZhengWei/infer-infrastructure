@@ -152,6 +152,49 @@ class ReverseBitsInstruction(InstructionBase):
         m.d.comb += self.done.eq(1)
 
 
+class Dot4Instruction(InstructionBase):
+    """Dot product of four signed int8 lanes.
+
+    in0 and in1 each hold four int8 values, little-endian.
+    The result is the sum of the four products, ready in the same cycle.
+    """
+
+    def elab(self, m):
+        total = 0
+        for i in range(4):
+            a = self.in0.word_select(i, 8).as_signed()
+            b = self.in1.word_select(i, 8).as_signed()
+            total += a * b
+        m.d.comb += self.output.eq(total)
+        m.d.comb += self.done.eq(1)
+
+
+def python_dot4(a, b):
+    total = 0
+    for i in range(4):
+        av = (a >> (8 * i)) & 0xFF
+        bv = (b >> (8 * i)) & 0xFF
+        if av >= 128:
+            av -= 256
+        if bv >= 128:
+            bv -= 256
+        total += av * bv
+    return total & 0xFFFFFFFF
+
+
+class Dot4InstructionTest(InstructionTestBase):
+    def create_dut(self):
+        return Dot4Instruction()
+
+    def test_dot4(self):
+        self.verify_against_reference([
+            (0x01020304, 0x01010101),
+            (0x000000FF, 0x00000002),
+            (0xFF00FF01, 0x0201FE03),
+            (0x80807FFF, 0x7F7F8080),
+        ], python_dot4)
+
+
 class ReverseBitsInstructionTest(InstructionTestBase):
     def create_dut(self):
         return ReverseBitsInstruction()
@@ -198,6 +241,7 @@ def make_cfu():
         1: ReverseBytesInstruction(),
         2: ReverseBitsInstruction(),
         3: FibInstruction(),
+        4: Dot4Instruction(),
     })
 
 
@@ -214,6 +258,8 @@ class CfuTest(CfuTestBase):
             ((3, 0x06, 0), 8),
             ((3, 46, 0), 1836311903),  # Max input
             ((3, 47, 0), 0),           # Input too large
+            ((4, 0x01020304, 0x01010101), 10),
+            ((4, 0x000000FF, 0x00000002), 0xFFFFFFFE),
         ]
         return self.run_ops(DATA)
 

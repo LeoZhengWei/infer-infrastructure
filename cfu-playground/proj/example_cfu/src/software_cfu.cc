@@ -46,6 +46,16 @@ uint32_t bit_reverse(uint32_t rs1) {
   return retval;
 }
 
+uint32_t dot4(uint32_t rs1, uint32_t rs2) {
+  int32_t acc = 0;
+  for (int i = 0; i < 4; ++i) {
+    acc += (int32_t)(int8_t)(rs1 & 0xff) * (int32_t)(int8_t)(rs2 & 0xff);
+    rs1 >>= 8;
+    rs2 >>= 8;
+  }
+  return (uint32_t)acc;
+}
+
 uint32_t fib(uint32_t rs1) {
   if (rs1 > 46) {
     return 0;
@@ -76,6 +86,8 @@ uint32_t software_cfu(int funct3, int funct7, uint32_t rs1, uint32_t rs2) {
       return bit_reverse(rs1);
     case 3:
       return fib(rs1);
+    case 4:
+      return dot4(rs1, rs2);
     default:
       return 0;
   }
