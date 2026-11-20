@@ -1,0 +1,73 @@
+<mxfile host="Electron">
+  <diagram name="第 1 页" id="WCaOfN6Har5jxyDRXa1d">
+    <mxGraphModel dx="988" dy="862" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="rkLqKJuG3HNv2D0tU3zE-4" edge="1" parent="1" source="rkLqKJuG3HNv2D0tU3zE-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="rkLqKJuG3HNv2D0tU3zE-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rkLqKJuG3HNv2D0tU3zE-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="renode仿真" vertex="1">
+          <mxGeometry height="60" width="120" x="240" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="rkLqKJuG3HNv2D0tU3zE-20" edge="1" parent="1" source="rkLqKJuG3HNv2D0tU3zE-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="rkLqKJuG3HNv2D0tU3zE-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rkLqKJuG3HNv2D0tU3zE-3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="proj_memu.cc中自定义的hw和sw函数" vertex="1">
+          <mxGeometry height="60" width="120" x="240" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="rkLqKJuG3HNv2D0tU3zE-24" edge="1" parent="1" source="rkLqKJuG3HNv2D0tU3zE-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="rkLqKJuG3HNv2D0tU3zE-21">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rkLqKJuG3HNv2D0tU3zE-28" edge="1" parent="1" source="rkLqKJuG3HNv2D0tU3zE-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="rkLqKJuG3HNv2D0tU3zE-27">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rkLqKJuG3HNv2D0tU3zE-6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="s = perf_get_mcycle()" vertex="1">
+          <mxGeometry height="60" width="120" x="240" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="rkLqKJuG3HNv2D0tU3zE-26" edge="1" parent="1" source="rkLqKJuG3HNv2D0tU3zE-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="rkLqKJuG3HNv2D0tU3zE-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rkLqKJuG3HNv2D0tU3zE-11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="C函数执行仿真的RISC-V指令" vertex="1">
+          <mxGeometry height="60" width="120" x="120" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="rkLqKJuG3HNv2D0tU3zE-33" edge="1" parent="1" source="rkLqKJuG3HNv2D0tU3zE-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="rkLqKJuG3HNv2D0tU3zE-32">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rkLqKJuG3HNv2D0tU3zE-12" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="e = perf_get_mcycle()" vertex="1">
+          <mxGeometry height="60" width="120" x="240" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="rkLqKJuG3HNv2D0tU3zE-25" edge="1" parent="1" source="rkLqKJuG3HNv2D0tU3zE-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="rkLqKJuG3HNv2D0tU3zE-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rkLqKJuG3HNv2D0tU3zE-21" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="cfu_op3_sw(args)" vertex="1">
+          <mxGeometry height="60" width="120" x="120" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="rkLqKJuG3HNv2D0tU3zE-30" edge="1" parent="1" source="rkLqKJuG3HNv2D0tU3zE-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="rkLqKJuG3HNv2D0tU3zE-29">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rkLqKJuG3HNv2D0tU3zE-38" edge="1" parent="1" source="rkLqKJuG3HNv2D0tU3zE-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="rkLqKJuG3HNv2D0tU3zE-34">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rkLqKJuG3HNv2D0tU3zE-27" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="cfu_op3_sw(args)" vertex="1">
+          <mxGeometry height="60" width="120" x="360" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="rkLqKJuG3HNv2D0tU3zE-31" edge="1" parent="1" source="rkLqKJuG3HNv2D0tU3zE-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="rkLqKJuG3HNv2D0tU3zE-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rkLqKJuG3HNv2D0tU3zE-37" edge="1" parent="1" source="rkLqKJuG3HNv2D0tU3zE-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="rkLqKJuG3HNv2D0tU3zE-34">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rkLqKJuG3HNv2D0tU3zE-29" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="cfu.v仿真两个寄存器和一个加数器，按时钟进行计算" vertex="1">
+          <mxGeometry height="60" width="120" x="360" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="rkLqKJuG3HNv2D0tU3zE-32" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="验证加速：比较结果，看e - s的消耗" vertex="1">
+          <mxGeometry height="60" width="120" x="240" y="610" as="geometry" />
+        </mxCell>
+        <mxCell id="rkLqKJuG3HNv2D0tU3zE-34" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="cfu.v描述一小块数字电路来模拟fpga板，使用一个状态机来统计拍数" vertex="1">
+          <mxGeometry height="60" width="120" x="560" y="370" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
