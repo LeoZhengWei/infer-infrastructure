@@ -1,0 +1,9 @@
+cmake_minimum_required(VERSION 3.16)
+project(transformer_cpp LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+# 源码根目录是本文件所在目录，即 CMAKE_SOURCE_DIR，不要自行改写。
+# 可执行文件落到 <项目>/build，与 cmake -B build 用的是同一目录。
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build/bin)
+find_package(Eigen3 CONFIG REQUIRED)
+add_executable(matmul_check src/matmul_check.cpp)
+target_link_libraries(matmul_check PRIVATE Eigen3::Eigen)
