@@ -1,31 +1,22 @@
-# CAM++ 声纹：PyTorch CPU / ONNX Runtime / MPS
+# CAM++ 声纹
 
-独立项目。声纹模型是 3D-Speaker 的 CAM++（`iic/speech_campplus_sv_zh-cn_16k-common`）。
+一周学习用的骨架。计划、过关标准和截止时间在 `summary.md`。推理、导出、量化、计时的代码自己写。
 
-三条后端用同一套权重：
+留下的只有这些：
 
-| 后端 | 是什么 |
+| 路径 | 作用 |
 |---|---|
-| 原始 | PyTorch `CAMPPlus`，CPU |
-| ONNX | 手写 `torch.onnx.export`，ONNX Runtime 1.32。Python 和 C++ 各跑一次 |
-| MPS | 同一模型 `model.to("mps")`，Apple Metal |
+| `weights/config.yaml` | 网络和前端配置 |
+| `weights/configuration.json` | ModelScope 的包说明 |
+| `weights/campplus_cn_common.bin` | 权重，不进 git。没有就按 `summary.md` 周一的命令下载 |
+| `audio/*.wav` | 三条 16 kHz 示例语音 |
+| `third_party/campplus/speakerlab/` | CAM++ 模型定义，只读 |
+| `requirements.txt` | torch、onnx、onnxruntime、numpy、onnxsim |
 
-## 跑
+环境是 Python 3.11 这一条：
 
 ```bash
-/Users/mac/data/campplus-sv/run.sh
+conda activate /home/hjadmin/zw/infer-infrastructure/cfu-playground/env/conda/envs/onnx
 ```
 
-需要本机已有的 `/Users/mac/miniconda3/bin/python`（torch、onnx、onnxruntime）。结果写到 `results/BENCH.md`。
-
-声纹例子在 `audio/`。余弦阈值沿用模型卡的 0.31。计时只含 embedding 前向，不含 fbank。
-
-W4A8 / W4A4 在 `python/bench_w4.py`，结果写到 `results/QUANT.md`。权重是每通道 int4，激活分别是 int8 和 int4，卷积走 `torch._int_mm`。
-
-Q8 是 FP32 ONNX 上的静态 int8（`python/quantize_q8.py`）。`python/bench_q8.py` 用 Python ORT 和 C++ ORT 各记 10 轮，并写出量化前后的余弦差，结果在 `results/Q8.md`。
-
-## 导出时改过的一处
-
-`speakerlab/models/campplus/layers.py` 里 `avg_pool1d` 加了 `count_include_pad=False`。零填充时 PyTorch 数值不变，导出的 `AveragePool` 在各版本 ONNX Runtime 上和 PyTorch 对齐。
-
-权重与 `speakerlab/models/campplus/` 来自 ModelScope / 3D-Speaker，Apache-2.0，见 `third_party/campplus/LICENSE`。ONNX Runtime 头文件是 MIT。
+每天的笔记写到 `results/dayN.md`，周日收成 `results/week.md`。

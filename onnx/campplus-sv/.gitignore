@@ -1,4 +1,6 @@
-cpp/build/
 __pycache__/
 *.pyc
 testdata/
+weights/*.bin
+onnx/*.onnx
+onnx/*.pack
