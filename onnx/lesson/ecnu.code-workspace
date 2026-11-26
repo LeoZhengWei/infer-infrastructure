@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "../../../rknn"
+		},
+		{
+			"path": "../campplus-sv"
 		}
 	],
 	"settings": {}
